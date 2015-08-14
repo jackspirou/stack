@@ -1,4 +1,4 @@
-package gostack
+package stack
 
 import (
 	"errors"
@@ -6,51 +6,37 @@ import (
 	"reflect"
 )
 
-type StackItem struct {
-	Item interface{}
-}
-
-func NewStackItem(i interface{}) StackItem {
-	return StackItem{
-		Item: i,
-	}
-}
-
-func (s StackItem) String() string {
-	return fmt.Sprintf("%v ", s.Item)
-}
-
+// Stack represents a golang implimentation of the abstract stack data type
+// that accepts an empty interface to ensure struct compabilility.
 type Stack struct {
-	list []StackItem
+	list []interface{}
 }
 
-func NewStack() *Stack {
-	return &Stack{
-		list: make([]StackItem, 0),
-	}
+func New() *Stack {
+	return &Stack{}
 }
 
-func BuildStack(slice interface{}) *Stack {
+func Build(slice interface{}) *Stack {
 	if reflect.TypeOf(slice).Kind() != reflect.Slice {
 		panic("BuildStack only takes a slice.")
 	}
 	buff := reflect.ValueOf(slice)
 	s := &Stack{
-		list: make([]StackItem, buff.Len()),
+		list: make([]interface{}, buff.Len()),
 	}
 	for i := 0; i < buff.Len(); i++ {
-		s.list[i] = NewStackItem(buff.Index(i).Interface())
+		s.list[i] = buff.Index(i).Interface()
 	}
 	return s
 }
 
-func (s *Stack) Push(element interface{}) {
-	s.list = append(s.list, NewStackItem(element))
+func (s *Stack) Push(item interface{}) {
+	s.list = append(s.list, item)
 }
 
-func (s *Stack) Pop() (StackItem, error) {
+func (s *Stack) Pop() (interface{}, error) {
 	if s.Empty() {
-		return StackItem{}, errors.New("Empty Stack.")
+		return nil, errors.New("Stack Error: empty stack")
 	}
 	top := s.list[len(s.list)-1]
 	s.list = s.list[0 : len(s.list)-1]
@@ -62,10 +48,6 @@ func (s *Stack) Empty() bool {
 }
 
 func (s *Stack) Size() int {
-	return len(s.list)
-}
-
-func (s *Stack) Length() int {
 	return len(s.list)
 }
 

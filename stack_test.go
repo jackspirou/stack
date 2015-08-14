@@ -1,4 +1,4 @@
-package gostack
+package stack
 
 import (
 	"fmt"
